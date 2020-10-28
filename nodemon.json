@@ -1,0 +1,6 @@
+{
+    "env": {
+      "PORT": "3000",
+      "MONGO_CONNECT": "mongodb+srv://Vinny:teste@clustervinny.hdkv3.mongodb.net/viniciusdb?retryWrites=true&w=majority"
+    }
+  }
