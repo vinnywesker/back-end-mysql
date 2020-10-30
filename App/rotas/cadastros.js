@@ -1,37 +1,35 @@
 var express = require('express');
 var router = express.Router();
-
-var Empresa = require('../mongodb/mongoDB');
-
-router.route('/cadastros')
-
-    .post(function (req, res) {
-        var empresa = new Empresa();
-        var DateNow = Date()
-        empresa.nome = req.body.nome;
-        empresa.email = req.body.email;
-        empresa.empNome = req.body.empNome;
-        empresa.ip = req.body.ip;
-        empresa.date = DateNow;
-
-        empresa.save(function (error) {
-            if (error) {
-                return res.send(error);
-            }
-            res.sendStatus(201).send({
-                Autenticado: true
-            })
-        });
-    })
-
+var knex = require('../mysql/mysql')
+router.route('/produto')
     .get(function (req, res) {
-
-        Empresa.find(function (err, cadastros) {
-            if (err)
-                res.send(err);
-
-            res.json(cadastros);
-        });
+        knex.select().table('produtos').then((response) => {
+            res.send(response);
+        })
     });
+
+router.route('/fornecedor')
+    .post((req, res) => {
+        knex("fornecedor").insert(req.body)
+            .then(result => {
+                res.status(200).send("Sucesso");
+            })
+            .catch(err => {
+                res.send(err);
+            })
+
+    });
+router.route('/descricao')
+    .post((req, res) => {
+        knex("descricao").insert(req.body)
+            .then(result => {
+                res.status(200).send("Sucesso");
+            })
+            .catch(err => {
+                res.send(err);
+            })
+
+    });
+
 
 module.exports = router;
