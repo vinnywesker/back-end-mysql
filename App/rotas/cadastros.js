@@ -1,52 +1,23 @@
 var express = require('express');
 var router = express.Router();
 var knex = require('../mysql/mysql')
+var operacoes = require('../mysql/operacoes')
+
+const {
+    obterDadosTabela,
+    deletarDadosTabela,
+    inserirDadosTabela
+} = operacoes;
 
 
-const inserirDadosTabela = async (tabela, itens, res) => {
-    knex(tabela).insert(itens)
-        .then(result => {
-            res.status(200).send({
-                mensagem: 'SUCESSO'
-            });
-        })
-        .catch(err => {
-            res.send(err);
-        });
-}
-const deletarDadosTabela = async (tabela, Codigo, res) => {
-    let obterNomeLinhaCodigo;
-    switch (tabela) {
-        case 'produto':
-            obterNomeLinhaCodigo = 'CodProduto'
-            break;
-        case 'fornecedor':
-            obterNomeLinhaCodigo = 'CodFornecedor'
-            break;
-        case 'descricao':
-            obterNomeLinhaCodigo = 'CodDescricao'
-            break;
-    }
-    knex(tabela).where(obterNomeLinhaCodigo, Codigo).del()
-        .then(() => {
-            res.send({
-                mensagem: 'SUCESSO'
-            });
-        })
-        .catch(err => {
-            res.send(err);
-        })
-}
-
-router.route('/produtos')
+router.route('/mysql')
     .get(function (req, res) {
-        knex.select().table('fornecedor')
-            .then((response) => {
-                res.send(response);
-            })
-            .catch(err => {
-                res.send(err);
-            })
+        // const nomeTabela = req.headers.operation;
+        // if(!nomeTabela){
+        //     return res.send("ERR_OPERACAO_DADOS_N_ESPECIFICADA");
+        // }
+        // obterDadosTabela(nomeTabela, res);
+        obterDadosTabela('fornecedores', res);
     })
     .post((req, res) => {
         const nomeTabela = req.headers.operation;
@@ -67,7 +38,7 @@ router.route('/produtos')
                 mensagem: "ERR_OPERACAO_DADOS_N_ESPECIFICADA"
             });
         };
-        deletarDadosTabela(nomeTabela, req.body.Codigo, res);
+        deletarDadosTabela(nomeTabela, req.body.codigo, res);
     });
 
 module.exports = router;
